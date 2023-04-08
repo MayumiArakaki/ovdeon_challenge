@@ -3,3 +3,8 @@
 
 # code editors
 .idea
+.vscode
+
+# cache
+__pycache__
+*/__pycache__

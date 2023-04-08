@@ -1,1 +1,6 @@
 Flask==2.2.3
+Flask-Cors==3.0.10
+psycopg2
+python-decouple==3.8
+python-dotenv==1.0.0 
+autopep8
