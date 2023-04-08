@@ -1,53 +1,53 @@
-from database.db_restaurants import get_connection
-from .entities.Restaurant import Restaurant
+from database.db_foods import get_connection
+from .entities.Food import Food
 
-class RestaurantModel():
+class FoodModel():
     
     @classmethod
-    def get_restaurants(self):
+    def get_foods(self):
         try:
             connection = get_connection()
-            restaurants = []
+            foods = []
 
             with connection.cursor() as cursor:
-                cursor.execute("SELECT id, username, password FROM restaurant ORDER BY username ASC")
+                cursor.execute("SELECT id, name, type_food, price, image FROM food ORDER BY name ASC")
                 resultset=cursor.fetchall()
 
                 for row in resultset:
-                    restaurant = Restaurant(row[0], row[1], row[2])
-                    restaurants.append(restaurant.to_JSON())
+                    food = Food(row[0], row[1], row[2], row[3], row[4])
+                    foods.append(food.to_JSON())
             
             connection.close()
-            return restaurants
+            return foods
         except Exception as ex:
             raise Exception(ex)
         
     @classmethod
-    def get_restaurant(self, username):
+    def get_food(self, id):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("SELECT id, username, password FROM restaurant WHERE username = %s",(username,))
+                cursor.execute("SELECT id, name, type_food, price, image FROM food WHERE id = %s",(id,))
                 row = cursor.fetchone()
 
-                restaurant = None
+                food = None
                 if row != None:
-                    restaurant = Restaurant(row[0], row[1], row[2])
-                    restaurant = restaurant.to_JSON()
+                    food = Food(row[0], row[1], row[2])
+                    food = food.to_JSON()
             
             connection.close()
-            return restaurant
+            return food
         except Exception as ex:
             raise Exception(ex)
         
     @classmethod
-    def add_restaurant(self, restaurant):
+    def add_food(self, food):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("""INSERT INTO restaurant (id, username, password) VALUES (%s %s, %s)""", (restaurant.id, restaurant.username, restaurant.password))
+                cursor.execute("""INSERT INTO food (id, name, type_food, price, image) VALUES (%s, %s, %s, %s, %s)""", (food.id, food.name, food.type_food, food.price, food.image))
                 affected_rows = cursor.rowcount
                 connection.commit()
             
@@ -57,12 +57,12 @@ class RestaurantModel():
             raise Exception(ex)
     
     @classmethod
-    def update_restaurant(self, restaurant):
+    def update_food(self, food):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("""UPDATE restaurant SET username=%s, password=%s WHERE id=%s""", (restaurant.username, restaurant.password, restaurant.id))
+                cursor.execute("""UPDATE food SET name=%s, type_food=%s, price=%s, image=%s WHERE id=%s""", (food.name, food.type_food, food.price, food.image, food.id))
                 affected_rows = cursor.rowcount
                 connection.commit()
             
@@ -72,12 +72,12 @@ class RestaurantModel():
             raise Exception(ex)
         
     @classmethod
-    def delete_restaurant(self, restaurant):
+    def delete_food(self, food):
         try:
             connection = get_connection()
 
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM restaurant WHERE id= %s)", (restaurant.id,))
+                cursor.execute("DELETE FROM food WHERE id= %s)", (food.id,))
                 affected_rows = cursor.rowcount
                 connection.commit()
             
